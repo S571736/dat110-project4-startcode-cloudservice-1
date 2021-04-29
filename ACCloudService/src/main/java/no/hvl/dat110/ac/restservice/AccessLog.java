@@ -6,50 +6,46 @@ import java.util.concurrent.atomic.AtomicInteger;
 import com.google.gson.Gson;
 
 public class AccessLog {
-	
-	// atomic integer used to obtain identifiers for each access entry
-	private AtomicInteger cid;
-	protected ConcurrentHashMap<Integer, AccessEntry> log;
-	
-	public AccessLog () {
-		this.log = new ConcurrentHashMap<Integer,AccessEntry>();
-		cid = new AtomicInteger(0);
-	}
 
-	// TODO: add an access entry to the log for the provided message and return assigned id
-	//TODO: Correct????
-	public int add(String message) {
+    // atomic integer used to obtain identifiers for each access entry
+    private AtomicInteger cid;
+    protected ConcurrentHashMap<Integer, AccessEntry> log;
+    private Gson gson;
 
+    public AccessLog() {
+        this.log = new ConcurrentHashMap<Integer, AccessEntry>();
+        cid = new AtomicInteger(0);
+        gson = new Gson();
+    }
 
-		int id = log.size()+1;
-		AccessEntry entry = new AccessEntry(id, message);
+    // TODO: was to implement these methods
 
-		log.put(id, entry);
-		
-		return id;
-	}
-		
-	// TODO: retrieve a specific access entry from the log
-	public AccessEntry get(int id) {
+    //  add an access entry to the log for the provided message and return assigned id
 
+    public int add(String message) {
 
-		return log.get(id);
-		
-	}
-	
-	// TODO: clear the access entry log
-	public void clear() {
-		log.clear();
-		
-	}
-	
-	// TODO: return JSON representation of the access log
-	public String toJson () {
-    	
-		String json = null;
+        int id = cid.incrementAndGet();
+        log.put(id, gson.fromJson(message, AccessEntry.class));
 
+        return id;
+    }
 
-    	
-    	return json;
+    //  retrieve a specific access entry from the log
+    public AccessEntry get(int id) {
+        return log.get(id);
+    }
+
+    //  clear the access entry log
+    public void clear() {
+        log.clear();
+		cid.set(0);
+    }
+
+    //  return JSON representation of the access log
+    public String toJson() {
+
+        String json = gson.toJson(log);
+
+        return json;
     }
 }
