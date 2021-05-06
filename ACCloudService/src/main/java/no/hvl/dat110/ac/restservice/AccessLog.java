@@ -8,7 +8,7 @@ import com.google.gson.Gson;
 public class AccessLog {
 
     // atomic integer used to obtain identifiers for each access entry
-    private AtomicInteger cid;
+    protected AtomicInteger cid;
     protected ConcurrentHashMap<Integer, AccessEntry> log;
     private Gson gson;
 
