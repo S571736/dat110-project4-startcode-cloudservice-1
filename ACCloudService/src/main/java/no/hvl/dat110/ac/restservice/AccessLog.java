@@ -15,7 +15,7 @@ public class AccessLog {
     public AccessLog() {
         this.log = new ConcurrentHashMap<Integer, AccessEntry>();
         cid = new AtomicInteger(0);
-        gson = new Gson();
+
     }
 
     // TODO: was to implement these methods
@@ -24,9 +24,8 @@ public class AccessLog {
 
     public int add(String message) {
 
-        int id = cid.incrementAndGet();
-        log.put(id, gson.fromJson(message, AccessEntry.class));
-
+        int id = cid.getAndIncrement();
+        log.put(id, new AccessEntry(id, message));
         return id;
     }
 
@@ -43,7 +42,7 @@ public class AccessLog {
 
     //  return JSON representation of the access log
     public String toJson() {
-
+        gson = new Gson();
         String json = gson.toJson(log);
 
         return json;
