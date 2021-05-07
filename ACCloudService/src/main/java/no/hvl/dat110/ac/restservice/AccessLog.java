@@ -15,7 +15,6 @@ public class AccessLog {
     public AccessLog() {
         this.log = new ConcurrentHashMap<Integer, AccessEntry>();
         cid = new AtomicInteger(0);
-
     }
 
     // TODO: was to implement these methods

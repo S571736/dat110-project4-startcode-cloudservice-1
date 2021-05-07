@@ -1,16 +1,11 @@
 package no.hvl.dat110.ac.restservice;
 
-import static spark.Spark.after;
-import static spark.Spark.get;
-import static spark.Spark.port;
-import static spark.Spark.put;
-import static spark.Spark.post;
-import static spark.Spark.delete;
-
 import com.google.gson.Gson;
 
 import java.util.ArrayList;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import static spark.Spark.*;
 
 /**
  * Hello world!
@@ -42,12 +37,14 @@ public class App {
         // for basic testing purposes
         get("/accessdevice/hello", (req, res) -> gson.toJson("IoT Access Control Device"));
 
+        /**
+         * Get, post and delete methods for the log services, along with get for individual log messages
+         */
         post("/accessdevice/log", (req, res) -> {
             AccessMessage message = gson.fromJson(req.body(), AccessMessage.class);
             int id = accesslog.add(message.getMessage());
             return gson.toJson(accesslog.get(id));
         });
-
         get("/accessdevice/log", (req, res) -> {
             AtomicInteger id = accesslog.cid;
             ArrayList l = new ArrayList();
@@ -56,20 +53,20 @@ public class App {
             }
             return l.toString();
         });
-
-        get("/accessdevice/log/:id", (req, res) -> gson.toJson(accesslog.get(Integer.parseInt(req.params(":id")))));
-
         delete("/accessdevice/log", (req, res) -> {
             accesslog.clear();
             return gson.toJson("Log has been cleared");
         });
+
+        get("/accessdevice/log/:id", (req, res) -> gson.toJson(accesslog.get(Integer.parseInt(req.params(":id")))));
+
 
         // TODO: implement the routes required for the access control service
         // as per the HTTP/REST operations describined in the project description
 
         get("/accessdevice/code", (req, res) -> gson.toJson(accesscode.getAccesscode()));
         put("/accessdevice/code", (req, res) -> {
-        System.out.println(req.body());
+            System.out.println(req.body());
             accesscode = gson.fromJson(req.body(), AccessCode.class);
             accesscode.setAccesscode(accesscode.getAccesscode());
 
